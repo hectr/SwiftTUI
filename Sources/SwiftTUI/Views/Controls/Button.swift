@@ -31,64 +31,56 @@ public struct Button<Label: View>: View, PrimitiveView {
         node.view = self
         node.children[0].update(using: label.view)
     }
+}
 
-    private class ButtonControl: Control {
-        var action: () -> Void
-        var hover: () -> Void
-        var label: Control!
-        weak var buttonLayer: ButtonLayer?
+public class ButtonControl: Control {
+    var action: () -> Void
+    var hover: () -> Void
+    var label: Control!
+    weak var buttonLayer: ButtonLayer?
 
-        init(action: @escaping () -> Void, hover: @escaping () -> Void) {
-            self.action = action
-            self.hover = hover
-        }
+    init(action: @escaping () -> Void, hover: @escaping () -> Void) {
+        self.action = action
+        self.hover = hover
+    }
 
-        override func size(proposedSize: Size) -> Size {
-            return label.size(proposedSize: proposedSize)
-        }
+    override func size(proposedSize: Size) -> Size {
+        return label.size(proposedSize: proposedSize)
+    }
 
-        override func layout(size: Size) {
-            super.layout(size: size)
-            self.label.layout(size: size)
-        }
+    public  override func layout(size: Size) {
+        super.layout(size: size)
+        self.label.layout(size: size)
+    }
 
-        override func handleEvent(_ char: Character) {
-            if char == "\n" || char == " " {
-                action()
-            }
-        }
-
-        override var selectable: Bool { true }
-
-        override func becomeFirstResponder() {
-            super.becomeFirstResponder()
-            buttonLayer?.highlighted = true
-            hover()
-            layer.invalidate()
-        }
-
-        override func resignFirstResponder() {
-            super.resignFirstResponder()
-            buttonLayer?.highlighted = false
-            layer.invalidate()
-        }
-
-        override func makeLayer() -> Layer {
-            let layer = ButtonLayer()
-            self.buttonLayer = layer
-            return layer
+    public override func handleEvent(_ char: Character) {
+        if char == "\n" || char == " " {
+            action()
         }
     }
 
-    private class ButtonLayer: Layer {
-        var highlighted = false
+    override var selectable: Bool { true }
 
-        override func cell(at position: Position) -> Cell? {
-            var cell = super.cell(at: position)
-            if highlighted {
-                cell?.attributes.inverted.toggle()
-            }
-            return cell
-        }
+    public override func becomeFirstResponder() {
+        super.becomeFirstResponder()
+        buttonLayer?.highlighted = true
+        hover()
+        layer.invalidate()
     }
+
+    public override func resignFirstResponder() {
+        super.resignFirstResponder()
+        buttonLayer?.highlighted = false
+        layer.invalidate()
+    }
+
+    override func makeLayer() -> Layer {
+        let layer = ButtonLayer()
+        self.buttonLayer = layer
+        return layer
+    }
+}
+
+public class ButtonLayer: Layer {
+    public var highlighted = false
 }

@@ -23,24 +23,24 @@ public struct GeometryReader<Content: View>: View, PrimitiveView {
         node.view = self
         node.children[0].update(using: VStack(content: content(geometry)))
     }
+}
 
-    private class GeometryReaderControl: Control {
-        let geometry: State<Size>
+public class GeometryReaderControl: Control {
+    let geometry: State<Size>
 
-        init(geometry: State<Size>) {
-            self.geometry = geometry
-        }
+    init(geometry: State<Size>) {
+        self.geometry = geometry
+    }
 
-        override func size(proposedSize: Size) -> Size {
-            return proposedSize
-        }
+    override func size(proposedSize: Size) -> Size {
+        return proposedSize
+    }
 
-        override func layout(size: Size) {
-            super.layout(size: size)
-            self.children[0].layout(size: size)
-            if geometry.wrappedValue != size {
-                geometry.wrappedValue = size
-            }
+    public override func layout(size: Size) {
+        super.layout(size: size)
+        self.children[0].layout(size: size)
+        if geometry.wrappedValue != size {
+            geometry.wrappedValue = size
         }
     }
 }

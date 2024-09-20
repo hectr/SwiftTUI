@@ -43,65 +43,65 @@ private struct Padding<Content: View>: View, PrimitiveView, ModifierView {
         node.controls?.add(paddingControl)
         return paddingControl
     }
-    
-    private class PaddingControl: Control {
-        var edges: Edges
-        var length: Extended?
+}
 
-        let defaultLength: Extended = 1
+public class PaddingControl: Control {
+    var edges: Edges
+    var length: Extended?
 
-        init(edges: Edges, length: Extended?) {
-            self.edges = edges
-            self.length = length
-        }
+    let defaultLength: Extended = 1
 
-        override func size(proposedSize: Size) -> Size {
-            var proposedSize = proposedSize
-            proposedSize.width -= horizontalPadding
-            proposedSize.height -= verticalPadding
-            var size = children[0].size(proposedSize: proposedSize)
-            size.width += horizontalPadding
-            size.height += verticalPadding
-            return size
-        }
-        
-        override func layout(size: Size) {
-            var contentSize = size
-            contentSize.width -= horizontalPadding
-            contentSize.height -= verticalPadding
-            children[0].layout(size: contentSize)
-            children[0].layer.frame.position = Position(column: leftPadding, line: topPadding)
-            self.layer.frame.size = size
-        }
+    init(edges: Edges, length: Extended?) {
+        self.edges = edges
+        self.length = length
+    }
 
-        private var leftPadding: Extended {
-            edges.contains(.left) ? (length ?? defaultLength) : 0
-        }
+    override func size(proposedSize: Size) -> Size {
+        var proposedSize = proposedSize
+        proposedSize.width -= horizontalPadding
+        proposedSize.height -= verticalPadding
+        var size = children[0].size(proposedSize: proposedSize)
+        size.width += horizontalPadding
+        size.height += verticalPadding
+        return size
+    }
 
-        private var topPadding: Extended {
-            edges.contains(.top) ? (length ?? defaultLength) : 0
-        }
+    public override func layout(size: Size) {
+        var contentSize = size
+        contentSize.width -= horizontalPadding
+        contentSize.height -= verticalPadding
+        children[0].layout(size: contentSize)
+        children[0].layer.frame.position = Position(column: leftPadding, line: topPadding)
+        self.layer.frame.size = size
+    }
 
-        private var horizontalPadding: Extended {
-            var horizontalPadding: Extended = 0
-            if edges.contains(.left) {
-                horizontalPadding += length ?? defaultLength
-            }
-            if edges.contains(.right) {
-                horizontalPadding += length ?? defaultLength
-            }
-            return horizontalPadding
-        }
+    private var leftPadding: Extended {
+        edges.contains(.left) ? (length ?? defaultLength) : 0
+    }
 
-        private var verticalPadding: Extended {
-            var verticalPadding: Extended = 0
-            if edges.contains(.top) {
-                verticalPadding += length ?? defaultLength
-            }
-            if edges.contains(.bottom) {
-                verticalPadding += length ?? defaultLength
-            }
-            return verticalPadding
+    private var topPadding: Extended {
+        edges.contains(.top) ? (length ?? defaultLength) : 0
+    }
+
+    private var horizontalPadding: Extended {
+        var horizontalPadding: Extended = 0
+        if edges.contains(.left) {
+            horizontalPadding += length ?? defaultLength
         }
+        if edges.contains(.right) {
+            horizontalPadding += length ?? defaultLength
+        }
+        return horizontalPadding
+    }
+
+    private var verticalPadding: Extended {
+        var verticalPadding: Extended = 0
+        if edges.contains(.top) {
+            verticalPadding += length ?? defaultLength
+        }
+        if edges.contains(.bottom) {
+            verticalPadding += length ?? defaultLength
+        }
+        return verticalPadding
     }
 }

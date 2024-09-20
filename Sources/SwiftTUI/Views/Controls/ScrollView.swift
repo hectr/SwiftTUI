@@ -23,26 +23,26 @@ public struct ScrollView<Content: View>: View, PrimitiveView {
         node.view = self
         node.children[0].update(using: content.view)
     }
+}
 
-    private class ScrollControl: Control {
-        var contentControl: Control!
-        var contentOffset: Extended = 0
+public class ScrollControl: Control {
+    var contentControl: Control!
+    var contentOffset: Extended = 0
 
-        override func layout(size: Size) {
-            super.layout(size: size)
-            let contentSize = contentControl.size(proposedSize: .zero)
-            contentControl.layout(size: contentSize)
-            contentControl.layer.frame.position.line = -contentOffset
-        }
+    public override func layout(size: Size) {
+        super.layout(size: size)
+        let contentSize = contentControl.size(proposedSize: .zero)
+        contentControl.layout(size: contentSize)
+        contentControl.layer.frame.position.line = -contentOffset
+    }
 
-        override func scroll(to position: Position) {
-            let destination = position.line - contentControl.layer.frame.position.line
-            guard layer.frame.size.height > 0 else { return }
-            if contentOffset > destination {
-                contentOffset = destination
-            } else if contentOffset < destination - layer.frame.size.height + 1 {
-                contentOffset = destination - layer.frame.size.height + 1
-            }
+    override func scroll(to position: Position) {
+        let destination = position.line - contentControl.layer.frame.position.line
+        guard layer.frame.size.height > 0 else { return }
+        if contentOffset > destination {
+            contentOffset = destination
+        } else if contentOffset < destination - layer.frame.size.height + 1 {
+            contentOffset = destination - layer.frame.size.height + 1
         }
     }
 }

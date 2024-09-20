@@ -18,21 +18,21 @@ public struct Spacer: View, PrimitiveView {
         let control = node.control as! SpacerControl
         control.orientation = stackOrientation
     }
-    
-    private class SpacerControl: Control {
-        var orientation: StackOrientation
-        
-        init(orientation: StackOrientation) {
-            self.orientation = orientation
-        }
-        
-        override func size(proposedSize: Size) -> Size {
-            switch orientation {
-            case .horizontal:
-                return Size(width: proposedSize.width, height: 0)
-            case .vertical:
-                return Size(width: 0, height: proposedSize.height)
-            }
+}
+
+public class SpacerControl: Control {
+    var orientation: StackOrientation
+
+    init(orientation: StackOrientation) {
+        self.orientation = orientation
+    }
+
+    override func size(proposedSize: Size) -> Size {
+        switch orientation {
+        case .horizontal:
+            return Size(width: proposedSize.width, height: 0)
+        case .vertical:
+            return Size(width: 0, height: proposedSize.height)
         }
     }
 }

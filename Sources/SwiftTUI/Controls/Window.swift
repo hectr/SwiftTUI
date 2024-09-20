@@ -1,11 +1,11 @@
 import Foundation
 
-class Window: LayerDrawing {
+public class Window: LayoutObject {
     private(set) lazy var layer: Layer = makeLayer()
 
     private(set) var controls: [Control] = []
 
-    var firstResponder: Control?
+    public var firstResponder: Control?
 
     func addControl(_ control: Control) {
         control.window = self
@@ -17,9 +17,5 @@ class Window: LayerDrawing {
         let layer = Layer()
         layer.content = self
         return layer
-    }
-
-    func cell(at position: Position) -> Cell? {
-        Cell(char: " ")
     }
 }

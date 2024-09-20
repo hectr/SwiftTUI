@@ -42,66 +42,66 @@ public struct ZStack<Content: View>: View, PrimitiveView, LayoutRootView {
     func removeControl(at index: Int, node: Node) {
         (node.control as! ZStackControl).removeSubview(at: index)
     }
-    
-    private class ZStackControl: Control {
-        var alignment: Alignment
-        
-        init(alignment: Alignment) {
-            self.alignment = alignment
+}
+
+public class ZStackControl: Control {
+    var alignment: Alignment
+
+    init(alignment: Alignment) {
+        self.alignment = alignment
+    }
+
+    // MARK: - Layout
+    override func size(proposedSize: Size) -> Size {
+        var size: Size = .zero
+        for control in children {
+            let childSize = control.size(proposedSize: Size(width: proposedSize.width, height: proposedSize.height))
+            size.height = max(size.height, childSize.height)
+            size.width = max(size.width, childSize.width)
         }
-        
-        // MARK: - Layout
-        override func size(proposedSize: Size) -> Size {
-            var size: Size = .zero
-            for control in children {
-                let childSize = control.size(proposedSize: Size(width: proposedSize.width, height: proposedSize.height))
-                size.height = max(size.height, childSize.height)
-                size.width = max(size.width, childSize.width)
-            }
-            return size
+        return size
+    }
+
+    public override func layout(size: Size) {
+        super.layout(size: size)
+        for control in children {
+            let childSize = control.size(proposedSize: Size(width: size.width, height: size.height))
+            control.layout(size: childSize)
         }
-        
-        override func layout(size: Size) {
-            super.layout(size: size)
-            for control in children {
-                let childSize = control.size(proposedSize: Size(width: size.width, height: size.height))
-                control.layout(size: childSize)
+        for control in children {
+            switch alignment.horizontalAlignment {
+            case .leading: control.layer.frame.position.column = 0
+            case .center: control.layer.frame.position.column = (size.width - control.layer.frame.size.width) / 2
+            case .trailing: control.layer.frame.position.column = size.width - control.layer.frame.size.width
             }
-            for control in children {
-                switch alignment.horizontalAlignment {
-                case .leading: control.layer.frame.position.column = 0
-                case .center: control.layer.frame.position.column = (size.width - control.layer.frame.size.width) / 2
-                case .trailing: control.layer.frame.position.column = size.width - control.layer.frame.size.width
-                }
-                switch alignment.verticalAlignment {
-                case .top: control.layer.frame.position.line = 0
-                case .center: control.layer.frame.position.line = (size.height - control.layer.frame.size.height) / 2
-                case .bottom: control.layer.frame.position.line = size.height - control.layer.frame.size.height
-                }
+            switch alignment.verticalAlignment {
+            case .top: control.layer.frame.position.line = 0
+            case .center: control.layer.frame.position.line = (size.height - control.layer.frame.size.height) / 2
+            case .bottom: control.layer.frame.position.line = size.height - control.layer.frame.size.height
             }
         }
-        
-        // MARK: - Selection
-        override func selectableElement(below index: Int) -> Control? {
-            var index = index + 1
-            while index < children.count {
-                if let element = children[index].firstSelectableElement {
-                    return element
-                }
-                index += 1
+    }
+
+    // MARK: - Selection
+    public override func selectableElement(below index: Int) -> Control? {
+        var index = index + 1
+        while index < children.count {
+            if let element = children[index].firstSelectableElement {
+                return element
             }
-            return super.selectableElement(below: index)
+            index += 1
         }
-        
-        override func selectableElement(above index: Int) -> Control? {
-            var index = index - 1
-            while index >= 0 {
-                if let element = children[index].firstSelectableElement {
-                    return element
-                }
-                index -= 1
+        return super.selectableElement(below: index)
+    }
+
+    public override func selectableElement(above index: Int) -> Control? {
+        var index = index - 1
+        while index >= 0 {
+            if let element = children[index].firstSelectableElement {
+                return element
             }
-            return super.selectableElement(above: index)
+            index -= 1
         }
+        return super.selectableElement(above: index)
     }
 }
