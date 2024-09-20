@@ -8,15 +8,18 @@ public class TerminalInputHandler: InputHandler {
     private var sigIntSource: DispatchSourceSignal?
 
     private var arrowKeyParser = ArrowKeyParser()
+    private var mouseEventParser = MouseEventParser()
 
     public init() {}
 
     public func start() {
         setInputMode()
+        enableMouseTracking()
         setupInputHandlers()
     }
 
     public func stop() {
+        disableMouseTracking()
         resetInputMode() // Fix for: https://github.com/rensbreur/SwiftTUI/issues/25
         stdInSource?.cancel()
         sigWinChSource?.cancel()
@@ -26,7 +29,7 @@ public class TerminalInputHandler: InputHandler {
     private func setInputMode() {
         var tattr = termios()
         tcgetattr(STDIN_FILENO, &tattr)
-        tattr.c_lflag &= ~tcflag_t(ECHO | ICANON)
+        tattr.c_lflag &= ~tcflag_t(ECHO | ICANON | ICRNL)
         tcsetattr(STDIN_FILENO, TCSAFLUSH, &tattr)
     }
 
@@ -37,6 +40,18 @@ public class TerminalInputHandler: InputHandler {
         tcgetattr(STDIN_FILENO, &tattr)
         tattr.c_lflag |= tcflag_t(ECHO | ICANON)
         tcsetattr(STDIN_FILENO, TCSAFLUSH, &tattr)
+    }
+
+    private func enableMouseTracking() {
+        write("\u{1B}[?1000h") // Enable mouse tracking (basic mode)
+        write("\u{1B}[?1002h") // Enable button-cell mouse tracking
+        write("\u{1B}[?1006h") // Enable SGR extended mouse mode
+    }
+
+    private func disableMouseTracking() {
+        write("\u{1B}[?1000l")
+        write("\u{1B}[?1002l")
+        write("\u{1B}[?1006l")
     }
 
     private func setupInputHandlers() {
@@ -67,38 +82,68 @@ public class TerminalInputHandler: InputHandler {
         guard let application = application else { return }
         let window = application.window
 
-        for char in string {
-            if arrowKeyParser.parse(character: char) {
-                guard let key = arrowKeyParser.arrowKey else { continue }
-                arrowKeyParser.arrowKey = nil
-                if key == .down {
-                    if let next = window.firstResponder?.selectableElement(below: 0) {
-                        window.firstResponder?.resignFirstResponder()
-                        window.firstResponder = next
-                        window.firstResponder?.becomeFirstResponder()
-                    }
-                } else if key == .up {
-                    if let next = window.firstResponder?.selectableElement(above: 0) {
-                        window.firstResponder?.resignFirstResponder()
-                        window.firstResponder = next
-                        window.firstResponder?.becomeFirstResponder()
-                    }
-                } else if key == .right {
-                    if let next = window.firstResponder?.selectableElement(rightOf: 0) {
-                        window.firstResponder?.resignFirstResponder()
-                        window.firstResponder = next
-                        window.firstResponder?.becomeFirstResponder()
-                    }
-                } else if key == .left {
-                    if let next = window.firstResponder?.selectableElement(leftOf: 0) {
-                        window.firstResponder?.resignFirstResponder()
-                        window.firstResponder = next
-                        window.firstResponder?.becomeFirstResponder()
-                    }
+        var index: String.Index
+        var parsingIndex = string.startIndex
+        parsingLoop:
+        while parsingIndex < string.endIndex {
+            // Attempt to parse mouse event:
+            index = parsingIndex
+            mouseLoop:
+            while index < string.endIndex {
+                let char = string[index]
+                index = string.index(after: index)
+
+                guard mouseEventParser.parse(character: char) else {
+                    // Cancel mouse event parsing.
+                    break mouseLoop
                 }
-            } else if char == ASCII.EOT {
+
+                guard let event = mouseEventParser.mouseEvent else {
+                    // Continue parsing mouse event...
+                    continue mouseLoop
+                }
+
+                // Handle mouse event.
+                mouseEventParser.mouseEvent = nil
+                handleMouseEvent(event)
+                parsingIndex = index
+                continue parsingLoop
+            }
+
+            // Mouse event not identified; attempt to parse arrow key:
+            index = parsingIndex
+            arrowLoop:
+            while index < string.endIndex {
+                let char = string[index]
+                index = string.index(after: index)
+
+                guard arrowKeyParser.parse(character: char) else {
+                    // Cancel arrow key parsing.
+                    break arrowLoop
+                }
+
+                guard let key = arrowKeyParser.arrowKey else {
+                    // Continue parsing arrow key...
+                    continue arrowLoop
+                }
+
+                // Handle arrow key.
+                arrowKeyParser.arrowKey = nil
+                handleArrowKey(key)
+                parsingIndex = index
+                continue parsingLoop
+            }
+
+            // Arrow key not identified; handle as key press:
+            let char = string[parsingIndex]
+            parsingIndex = string.index(after: parsingIndex)
+
+            if char == ASCII.EOT {
+                // Handle EOT
                 application.stop()
+
             } else {
+                // Handle regular character input
                 window.firstResponder?.handleEvent(char)
             }
         }
@@ -108,7 +153,61 @@ public class TerminalInputHandler: InputHandler {
         application?.handleWindowSizeChange()
     }
 
+    private func handleArrowKey(_ key: ArrowKeyParser.ArrowKey) {
+        guard let application = application else { return }
+        let window = application.window
+
+        if key == .down {
+            if let next = window.firstResponder?.selectableElement(below: 0) {
+                window.firstResponder?.resignFirstResponder()
+                window.firstResponder = next
+                window.firstResponder?.becomeFirstResponder()
+            }
+        } else if key == .up {
+            if let next = window.firstResponder?.selectableElement(above: 0) {
+                window.firstResponder?.resignFirstResponder()
+                window.firstResponder = next
+                window.firstResponder?.becomeFirstResponder()
+            }
+        } else if key == .right {
+            if let next = window.firstResponder?.selectableElement(rightOf: 0) {
+                window.firstResponder?.resignFirstResponder()
+                window.firstResponder = next
+                window.firstResponder?.becomeFirstResponder()
+            }
+        } else if key == .left {
+            if let next = window.firstResponder?.selectableElement(leftOf: 0) {
+                window.firstResponder?.resignFirstResponder()
+                window.firstResponder = next
+                window.firstResponder?.becomeFirstResponder()
+            }
+        }
+    }
+
+    private func handleMouseEvent(_ event: MouseEventParser.MouseEvent) {
+        guard let application = application else { return }
+        let window = application.window
+
+        // Convert terminal coordinates to application coordinates
+        let position = Position(column: Extended(event.column - 1), line: Extended(event.row - 1))
+
+        // Dispatch the event to the control at the position
+        if let control = application.control.selectableElement(at: position) {
+            window.firstResponder?.resignFirstResponder()
+            window.firstResponder = control
+            window.firstResponder?.becomeFirstResponder()
+
+            if event.eventType == .release , let buttonControl = control as? ButtonControl {
+                buttonControl.handleEvent("\n")
+            }
+        }
+    }
+
     private func handleInterrupt() {
         application?.stop()
+    }
+
+    private func write(_ str: String) {
+        str.withCString { _ = Darwin.write(STDOUT_FILENO, $0, strlen($0)) }
     }
 }
