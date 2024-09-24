@@ -43,15 +43,15 @@ public class TerminalInputHandler: InputHandler {
     }
 
     private func enableMouseTracking() {
-        write("\u{1B}[?1000h") // Enable mouse tracking (basic mode)
-        write("\u{1B}[?1002h") // Enable button-cell mouse tracking
-        write("\u{1B}[?1006h") // Enable SGR extended mouse mode
+        write(EscapeSequence.enableBasicMouseTracking)
+        write(EscapeSequence.enableButtonCellMouseTracking)
+        write(EscapeSequence.enableSGRExtendedMouseMode)
     }
 
     private func disableMouseTracking() {
-        write("\u{1B}[?1000l")
-        write("\u{1B}[?1002l")
-        write("\u{1B}[?1006l")
+        write(EscapeSequence.disableBasicMouseTracking)
+        write(EscapeSequence.disableButtonCellMouseTracking)
+        write(EscapeSequence.disableSGRExtendedMouseMode)
     }
 
     private func setupInputHandlers() {
