@@ -16,13 +16,12 @@ class MouseEventParser {
     }
     
     enum ParserState {
-        case none
-        case esc
-        case csi
-        case parameters(String)
+        case esc // escape character detected (ESC)
+        case csi // Control Sequence Introducer detected (ESC[)
+        case parameters(String) // collecting parameters
     }
 
-    var state: ParserState = .none
+    var state: ParserState? = .none
     var mouseEvent: MouseEvent?
 
     func parse(character: Character) -> Bool {
@@ -33,6 +32,7 @@ class MouseEventParser {
                 return true
             }
             return false
+
         case .esc:
             if character == "[" {
                 state = .csi
@@ -41,6 +41,7 @@ class MouseEventParser {
                 state = .none
                 return false
             }
+        
         case .csi:
             if character == "M" || character == "<" {
                 state = .parameters("")
@@ -49,6 +50,7 @@ class MouseEventParser {
                 state = .none
                 return false
             }
+        
         case .parameters(let params):
             if character.isNumber || character == ";" || character == "m" || character == "M" || character == "<" || character == "-" {
                 let newParams = params + String(character)
@@ -82,4 +84,3 @@ class MouseEventParser {
         }
     }
 }
-
