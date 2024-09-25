@@ -1,3 +1,5 @@
+#if !canImport(WinSDK)
+
 import Foundation
 
 public class TerminalRenderer: Renderer {
@@ -153,3 +155,5 @@ public class TerminalRenderer: Renderer {
         )
     }
 }
+
+#endif

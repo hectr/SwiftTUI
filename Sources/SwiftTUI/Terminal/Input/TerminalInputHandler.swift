@@ -1,3 +1,5 @@
+#if !canImport(WinSDK)
+
 import Foundation
 
 public class TerminalInputHandler: InputHandler {
@@ -112,3 +114,5 @@ public class TerminalInputHandler: InputHandler {
         application?.stop()
     }
 }
+
+#endif
