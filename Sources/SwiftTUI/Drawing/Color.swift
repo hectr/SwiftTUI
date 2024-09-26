@@ -41,6 +41,10 @@ public struct Color: Hashable {
         Color(data: .trueColor(TrueColor(red: red, green: green, blue: blue)))
     }
 
+    public static func xtermColor(value: Int) -> Color {
+        Color(data: .xterm(XTermColor(value: value)))
+    }
+    
     var foregroundEscapeSequence: String {
         switch data {
         case .ansi(let color):
@@ -124,7 +128,7 @@ struct XTermColor: Hashable {
 
     static func grayscale(white: Int) -> XTermColor {
         guard white >= 0, white < 24 else {
-            fatalError("Color value must lie between 1 and 24")
+            fatalError("Color value must lie between 0 and 23")
         }
         let offset = 16 + (6 * 6 * 6)
         return XTermColor(value: offset + white)
