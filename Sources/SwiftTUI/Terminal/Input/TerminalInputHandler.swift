@@ -43,15 +43,15 @@ public class TerminalInputHandler: InputHandler {
     }
 
     private func enableMouseTracking() {
-        write(EscapeSequence.enableBasicMouseTracking)
-        write(EscapeSequence.enableButtonCellMouseTracking)
-        write(EscapeSequence.enableSGRExtendedMouseMode)
+        _write(EscapeSequence.enableBasicMouseTracking)
+        _write(EscapeSequence.enableButtonCellMouseTracking)
+        _write(EscapeSequence.enableSGRExtendedMouseMode)
     }
 
     private func disableMouseTracking() {
-        write(EscapeSequence.disableBasicMouseTracking)
-        write(EscapeSequence.disableButtonCellMouseTracking)
-        write(EscapeSequence.disableSGRExtendedMouseMode)
+        _write(EscapeSequence.disableBasicMouseTracking)
+        _write(EscapeSequence.disableButtonCellMouseTracking)
+        _write(EscapeSequence.disableSGRExtendedMouseMode)
     }
 
     private func setupInputHandlers() {
@@ -207,7 +207,7 @@ public class TerminalInputHandler: InputHandler {
         application?.stop()
     }
 
-    private func write(_ str: String) {
-        str.withCString { _ = Darwin.write(STDOUT_FILENO, $0, strlen($0)) }
+    private func _write(_ str: String) {
+        str.withCString { _ = write(STDOUT_FILENO, $0, strlen($0)) }
     }
 }
