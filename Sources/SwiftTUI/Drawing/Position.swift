@@ -1,6 +1,6 @@
 import Foundation
 
-struct Position: Equatable {
+struct Position: Hashable {
     var column: Extended
     var line: Extended
 
