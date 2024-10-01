@@ -3,10 +3,10 @@ import Foundation
 let pixelBlockSize = (width: 4.0, height: 8.0)
 
 extension CGPoint {
-    init(_ position: Position) {
+    init(_ position: Position, offset: CGFloat = 0) {
         self.init(
-            x: CGFloat(position.column.intValue) * pixelBlockSize.width,
-            y: CGFloat(position.line.intValue) * pixelBlockSize.height
+            x: (CGFloat(position.column.intValue) + offset) * pixelBlockSize.width,
+            y: (CGFloat(position.line.intValue) + offset) * pixelBlockSize.height
         )
     }
 }
