@@ -46,10 +46,10 @@ private struct Padding<Content: View>: View, PrimitiveView, ModifierView {
 }
 
 public class PaddingControl: Control {
-    var edges: Edges
-    var length: Extended?
+    public var edges: Edges
+    public var length: Extended?
 
-    let defaultLength: Extended = 1
+    public let defaultLength: Extended = 1
 
     init(edges: Edges, length: Extended?) {
         self.edges = edges

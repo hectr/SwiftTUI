@@ -26,8 +26,8 @@ public struct ScrollView<Content: View>: View, PrimitiveView {
 }
 
 public class ScrollControl: Control {
-    var contentControl: Control!
-    var contentOffset: Extended = 0
+    public var contentControl: Control!
+    public var contentOffset: Extended = 0
 
     public override func layout(size: Size) {
         super.layout(size: size)

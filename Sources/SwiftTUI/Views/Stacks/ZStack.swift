@@ -45,7 +45,7 @@ public struct ZStack<Content: View>: View, PrimitiveView, LayoutRootView {
 }
 
 public class ZStackControl: Control {
-    var alignment: Alignment
+    public var alignment: Alignment
 
     init(alignment: Alignment) {
         self.alignment = alignment

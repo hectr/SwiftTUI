@@ -48,9 +48,9 @@ private struct FixedFrame<Content: View>: View, PrimitiveView, ModifierView {
 }
 
 public class FixedFrameControl: Control {
-    var width: Extended?
-    var height: Extended?
-    var alignment: Alignment
+    public var width: Extended?
+    public var height: Extended?
+    public var alignment: Alignment
 
     init(width: Extended?, height: Extended?, alignment: Alignment) {
         self.width = width

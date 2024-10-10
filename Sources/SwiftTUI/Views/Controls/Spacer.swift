@@ -21,7 +21,7 @@ public struct Spacer: View, PrimitiveView {
 }
 
 public class SpacerControl: Control {
-    var orientation: StackOrientation
+    public var orientation: StackOrientation
 
     init(orientation: StackOrientation) {
         self.orientation = orientation

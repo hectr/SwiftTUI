@@ -3,12 +3,12 @@ import Foundation
 /// The basic layout object that can be created by a node. Not every node will
 /// create a control (e.g. ForEach won't).
 public class Control: LayoutObject {
-    private(set) var children: [Control] = []
-    private(set) var parent: Control?
+    public private(set) var children: [Control] = []
+    public private(set) var parent: Control?
 
     private var index: Int = 0
 
-    var window: Window?
+    public var window: Window?
     public private(set) lazy var layer: Layer = makeLayer()
 
     var root: Control { parent?.root ?? self }

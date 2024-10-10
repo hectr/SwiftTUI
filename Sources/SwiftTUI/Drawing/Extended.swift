@@ -2,7 +2,7 @@ import Foundation
 
 /// `Int` extended with infinity values, used by certain modifiers such as `.frame(maxWidth:)` to
 /// allow views taking up all necessary space.
-public struct Extended: Equatable {
+public struct Extended: Hashable {
     fileprivate let data: Data
 
     fileprivate enum Data {
@@ -41,6 +41,10 @@ public struct Extended: Equatable {
             fatalError("Cannot convert infinite number to int")
         }
         return a
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        description.hash(into: &hasher)
     }
 }
 

@@ -52,11 +52,11 @@ private struct FlexibleFrame<Content: View>: View, PrimitiveView, ModifierView {
 }
 
 public class FlexibleFrameControl: Control {
-    var minWidth: Extended?
-    var maxWidth: Extended?
-    var minHeight: Extended?
-    var maxHeight: Extended?
-    var alignment: Alignment
+    public var minWidth: Extended?
+    public var maxWidth: Extended?
+    public var minHeight: Extended?
+    public var maxHeight: Extended?
+    public var alignment: Alignment
 
     init(minWidth: Extended?, maxWidth: Extended?, minHeight: Extended?, maxHeight: Extended?, alignment: Alignment) {
         self.minWidth = minWidth

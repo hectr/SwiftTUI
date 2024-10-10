@@ -34,10 +34,10 @@ public struct Button<Label: View>: View, PrimitiveView {
 }
 
 public class ButtonControl: Control {
-    var action: () -> Void
-    var hover: () -> Void
-    var label: Control!
-    weak var buttonLayer: ButtonLayer?
+    public var action: () -> Void
+    public var hover: () -> Void
+    public var label: Control!
+    public weak var buttonLayer: ButtonLayer?
 
     init(action: @escaping () -> Void, hover: @escaping () -> Void) {
         self.action = action

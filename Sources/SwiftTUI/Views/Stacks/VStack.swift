@@ -50,8 +50,8 @@ public struct VStack<Content: View>: View, PrimitiveView, LayoutRootView {
 }
 
 public class VStackControl: Control {
-    var alignment: HorizontalAlignment
-    var spacing: Extended
+    public var alignment: HorizontalAlignment
+    public var spacing: Extended
 
     init(alignment: HorizontalAlignment, spacing: Extended) {
         self.alignment = alignment

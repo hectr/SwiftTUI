@@ -1,9 +1,9 @@
 import Foundation
 
 public class Window: LayoutObject {
-    private(set) lazy var layer: Layer = makeLayer()
+    public private(set) lazy var layer: Layer = makeLayer()
 
-    private(set) var controls: [Control] = []
+    public private(set) var controls: [Control] = []
 
     public var firstResponder: Control?
 

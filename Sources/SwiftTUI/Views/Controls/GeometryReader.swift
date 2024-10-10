@@ -26,7 +26,7 @@ public struct GeometryReader<Content: View>: View, PrimitiveView {
 }
 
 public class GeometryReaderControl: Control {
-    let geometry: State<Size>
+    public let geometry: State<Size>
 
     init(geometry: State<Size>) {
         self.geometry = geometry

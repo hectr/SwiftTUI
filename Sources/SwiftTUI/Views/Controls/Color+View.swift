@@ -18,7 +18,7 @@ extension Color: View, PrimitiveView {
     }
 }
 
-public class ColorControl: Control {
+public class  ColorControl: Control {
     public var color: Color
 
     init(color: Color) {

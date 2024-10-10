@@ -10,7 +10,7 @@ public extension View {
     }
 }
 
-public struct BorderStyle: Equatable {
+public struct BorderStyle: Hashable {
     public let topLeft: Character
     public let top: Character
     public let topRight: Character

@@ -44,8 +44,8 @@ public struct HStack<Content: View>: View, PrimitiveView, LayoutRootView {
 }
 
 public class HStackControl: Control {
-    var alignment: VerticalAlignment
-    var spacing: Extended
+    public var alignment: VerticalAlignment
+    public var spacing: Extended
 
     init(alignment: VerticalAlignment, spacing: Extended) {
         self.alignment = alignment
