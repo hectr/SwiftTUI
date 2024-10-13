@@ -51,4 +51,13 @@ enum EscapeSequence {
 
     static let enableInverted = "\u{1b}[7m"
     static let disableInverted = "\u{1b}[27m"
+
+    static let enableBasicMouseTracking = "\u{1B}[?1000h"
+    static let disableBasicMouseTracking = "\u{1B}[?1000l"
+
+    static let enableButtonCellMouseTracking = "\u{1B}[?1002h"
+    static let disableButtonCellMouseTracking = "\u{1B}[?1002l"
+
+    static let enableSGRExtendedMouseMode = "\u{1B}[?1006h"
+    static let disableSGRExtendedMouseMode = "\u{1B}[?1006l"
 }

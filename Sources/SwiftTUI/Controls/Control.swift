@@ -110,6 +110,21 @@ public class Control: LayoutObject {
     public func selectableElement(rightOf index: Int) -> Control? { parent?.selectableElement(rightOf: self.index) }
     public func selectableElement(leftOf index: Int) -> Control? { parent?.selectableElement(leftOf: self.index) }
 
+    public func selectableElement(at position: Position) -> Control? {
+        if layer.frame.contains(position) {
+            let localPosition = position - layer.frame.position
+            for child in children.reversed() {
+                if let found = child.selectableElement(at: localPosition) {
+                    return found
+                }
+            }
+            if selectable {
+                return self
+            }
+        }
+        return nil
+    }
+
     // MARK: - Scrolling
 
     func scroll(to position: Position) {
