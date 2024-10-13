@@ -51,4 +51,6 @@ enum EscapeSequence {
 
     static let enableInverted = "\u{1b}[7m"
     static let disableInverted = "\u{1b}[27m"
+
+    static let resetAttributes = "\u{1b}[0m"
 }
