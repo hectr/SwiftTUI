@@ -6,9 +6,9 @@ public extension View {
     }
 }
 
-private struct OnAppear<Content: View>: View, PrimitiveView, ModifierView {
+public struct OnAppear<Content: View>: View, PrimitiveView, ModifierView {
     let content: Content
-    let action: () -> Void
+    public let action: () -> Void
 
     static var size: Int? { Content.size }
 
@@ -27,26 +27,26 @@ private struct OnAppear<Content: View>: View, PrimitiveView, ModifierView {
         onAppearControl.addSubview(control, at: 0)
         return onAppearControl
     }
+}
 
-    private class OnAppearControl: Control {
-        var action: () -> Void
-        var didAppear = false
+public class OnAppearControl: Control {
+    public var action: () -> Void
+    var didAppear = false
 
-        init(action: @escaping () -> Void) {
-            self.action = action
-        }
+    init(action: @escaping () -> Void) {
+        self.action = action
+    }
 
-        override func size(proposedSize: Size) -> Size {
-            children[0].size(proposedSize: proposedSize)
-        }
+    public override func size(proposedSize: Size) -> Size {
+        children[0].size(proposedSize: proposedSize)
+    }
 
-        override func layout(size: Size) {
-            super.layout(size: size)
-            children[0].layout(size: size)
-            if !didAppear {
-                didAppear = true
-                DispatchQueue.main.async { [action] in action() }
-            }
+    public override func layout(size: Size) {
+        super.layout(size: size)
+        children[0].layout(size: size)
+        if !didAppear {
+            didAppear = true
+            DispatchQueue.main.async { [action] in action() }
         }
     }
 }

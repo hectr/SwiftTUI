@@ -23,74 +23,55 @@ public struct TextField: View, PrimitiveView {
         node.view = self
         (node.control as! TextFieldControl).action = action
     }
+}
 
-    private class TextFieldControl: Control {
-        var placeholder: String
-        var placeholderColor: Color
-        var action: (String) -> Void
+public class TextFieldControl: Control {
+    public var placeholder: String
+    public var placeholderColor: Color
+    public var action: (String) -> Void
 
-        var text: String = ""
+    public var text: String = ""
 
-        init(placeholder: String, placeholderColor: Color, action: @escaping (String) -> Void) {
-            self.placeholder = placeholder
-            self.placeholderColor = placeholderColor
-            self.action = action
+    init(placeholder: String, placeholderColor: Color, action: @escaping (String) -> Void) {
+        self.placeholder = placeholder
+        self.placeholderColor = placeholderColor
+        self.action = action
+    }
+
+    public override func size(proposedSize: Size) -> Size {
+        return Size(width: Extended(max(text.count, placeholder.count)) + 1, height: 1)
+    }
+
+    public override func handleEvent(_ char: Character) {
+        if char == "\n" {
+            action(text)
+            self.text = ""
+            layer.invalidate()
+            return
         }
 
-        override func size(proposedSize: Size) -> Size {
-            return Size(width: Extended(max(text.count, placeholder.count)) + 1, height: 1)
-        }
-
-        override func handleEvent(_ char: Character) {
-            if char == "\n" {
-                action(text)
-                self.text = ""
+        if char == ASCII.DEL {
+            if !self.text.isEmpty {
+                self.text.removeLast()
                 layer.invalidate()
-                return
             }
-
-            if char == ASCII.DEL {
-                if !self.text.isEmpty {
-                    self.text.removeLast()
-                    layer.invalidate()
-                }
-                return
-            }
-
-            self.text += String(char)
-            layer.invalidate()
+            return
         }
 
-        override func cell(at position: Position) -> Cell? {
-            guard position.line == 0 else { return nil }
-            if text.isEmpty {
-                if position.column.intValue < placeholder.count {
-                    let showUnderline = (position.column.intValue == 0) && isFirstResponder
-                    let char = placeholder[placeholder.index(placeholder.startIndex, offsetBy: position.column.intValue)]
-                    return Cell(
-                        char: char,
-                        foregroundColor: placeholderColor,
-                        attributes: CellAttributes(underline: showUnderline)
-                    )
-                }
-                return .init(char: " ")
-            }
-            if position.column.intValue == text.count, isFirstResponder { return Cell(char: " ", attributes: CellAttributes(underline: true)) }
-            guard position.column.intValue < text.count else { return .init(char: " ") }
-            return Cell(char: text[text.index(text.startIndex, offsetBy: position.column.intValue)])
-        }
+        self.text += String(char)
+        layer.invalidate()
+    }
 
-        override var selectable: Bool { true }
+    public override var selectable: Bool { true }
 
-        override func becomeFirstResponder() {
-            super.becomeFirstResponder()
-            layer.invalidate()
-        }
+    public override func becomeFirstResponder() {
+        super.becomeFirstResponder()
+        layer.invalidate()
+    }
 
-        override func resignFirstResponder() {
-            super.resignFirstResponder()
-            layer.invalidate()
-        }
+    public override func resignFirstResponder() {
+        super.resignFirstResponder()
+        layer.invalidate()
     }
 }
 

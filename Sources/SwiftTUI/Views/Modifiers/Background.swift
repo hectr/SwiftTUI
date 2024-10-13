@@ -36,25 +36,21 @@ private struct Background<Content: View>: View, PrimitiveView, ModifierView {
         node.controls?.add(backgroundControl)
         return backgroundControl
     }
+}
 
-    private class BackgroundControl: Control {
-        var color: Color
+public class BackgroundControl: Control {
+    public var color: Color
 
-        init(color: Color) {
-            self.color = color
-        }
+    init(color: Color) {
+        self.color = color
+    }
 
-        override func size(proposedSize: Size) -> Size {
-            children[0].size(proposedSize: proposedSize)
-        }
+    public override func size(proposedSize: Size) -> Size {
+        children[0].size(proposedSize: proposedSize)
+    }
 
-        override func layout(size: Size) {
-            super.layout(size: size)
-            children[0].layout(size: size)
-        }
-
-        override func cell(at position: Position) -> Cell? {
-            Cell(char: " ", backgroundColor: color)
-        }
+    public override func layout(size: Size) {
+        super.layout(size: size)
+        children[0].layout(size: size)
     }
 }

@@ -8,9 +8,9 @@ import Foundation
 /// The named colors are ANSI colors. In many terminal emulators they are user-defined or part of a
 /// theme, and bold text automatically uses the bright color variant.
 public struct Color: Hashable {
-    private let data: Data
+    public let data: Data
 
-    private enum Data: Hashable {
+    public enum Data: Hashable {
         case ansi(ANSIColor)
         case xterm(XTermColor)
         case trueColor(TrueColor)
@@ -41,28 +41,6 @@ public struct Color: Hashable {
         Color(data: .trueColor(TrueColor(red: red, green: green, blue: blue)))
     }
 
-    var foregroundEscapeSequence: String {
-        switch data {
-        case .ansi(let color):
-            return EscapeSequence.setForegroundColor(color)
-        case .trueColor(let color):
-            return EscapeSequence.setForegroundColor(red: color.red, green: color.green, blue: color.blue)
-        case .xterm(let color):
-            return EscapeSequence.setForegroundColor(xterm: color.value)
-        }
-    }
-
-    var backgroundEscapeSequence: String {
-        switch data {
-        case .ansi(let color):
-            return EscapeSequence.setBackgroundColor(color)
-        case .trueColor(let color):
-            return EscapeSequence.setBackgroundColor(red: color.red, green: color.green, blue: color.blue)
-        case .xterm(let color):
-            return EscapeSequence.setBackgroundColor(xterm: color.value)
-        }
-    }
-
     public static var `default`: Color { Color.ansi(.default) }
 
     public static var black: Color { .ansi(.black) }
@@ -86,9 +64,9 @@ public struct Color: Hashable {
     public static var gray: Color { .brightBlack }
 }
 
-struct ANSIColor: Hashable {
-    let foregroundCode: Int
-    let backgroundCode: Int
+public struct ANSIColor: Hashable {
+    public let foregroundCode: Int
+    public let backgroundCode: Int
 
     static var `default`: ANSIColor { ANSIColor(foregroundCode: 39, backgroundCode: 49) }
 
@@ -111,8 +89,8 @@ struct ANSIColor: Hashable {
     static var brightWhite: ANSIColor { ANSIColor(foregroundCode: 97, backgroundCode: 107) }
 }
 
-struct XTermColor: Hashable {
-    let value: Int
+public struct XTermColor: Hashable {
+    public let value: Int
 
     static func color(red: Int, green: Int, blue: Int) -> XTermColor {
         guard red >= 0, red < 6, green >= 0, green < 6, blue >= 0, blue < 6 else {
@@ -131,8 +109,8 @@ struct XTermColor: Hashable {
     }
 }
 
-struct TrueColor: Hashable {
-    let red: Int
-    let green: Int
-    let blue: Int
+public struct TrueColor: Hashable {
+    public let red: Int
+    public let green: Int
+    public let blue: Int
 }
