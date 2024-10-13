@@ -41,18 +41,18 @@ public class TerminalInputHandler: InputHandler {
 
     private func setupInputHandlers() {
         let stdInSource = DispatchSource.makeReadSource(fileDescriptor: STDIN_FILENO, queue: .main)
-        stdInSource.setEventHandler(qos: .default, flags: [], handler: self.handleInput)
+        stdInSource.setEventHandler(qos: .default, flags: [], handler: handleInput)
         stdInSource.resume()
         self.stdInSource = stdInSource
 
         let sigWinChSource = DispatchSource.makeSignalSource(signal: SIGWINCH, queue: .main)
-        sigWinChSource.setEventHandler(qos: .default, flags: [], handler: self.handleWindowSizeChange)
+        sigWinChSource.setEventHandler(qos: .default, flags: [], handler: handleWindowSizeChange)
         sigWinChSource.resume()
         self.sigWinChSource = sigWinChSource
 
         signal(SIGINT, SIG_IGN)
         let sigIntSource = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
-        sigIntSource.setEventHandler(qos: .default, flags: [], handler: self.handleInterrupt)
+        sigIntSource.setEventHandler(qos: .default, flags: [], handler: handleInterrupt)
         sigIntSource.resume()
         self.sigIntSource = sigIntSource
     }

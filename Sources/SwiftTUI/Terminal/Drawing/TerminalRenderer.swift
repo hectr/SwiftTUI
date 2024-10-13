@@ -29,7 +29,7 @@ public class TerminalRenderer: Renderer {
 
     private func setLayer(_ layer: Layer) {
         self.layer = layer
-        self.updateWindowSize() // Set the initial size of the layer
+        updateWindowSize() // Set the initial size of the layer
         self.layer?.renderer = self
     }
 
@@ -86,22 +86,22 @@ public class TerminalRenderer: Renderer {
         }
         if cache[position.line.intValue][position.column.intValue] != cell {
             cache[position.line.intValue][position.column.intValue] = cell
-            if self.currentPosition != position {
+            if currentPosition != position {
                 _write(EscapeSequence.moveTo(position))
-                self.currentPosition = position
+                currentPosition = position
             }
-            if self.currentForegroundColor != cell.foregroundColor {
+            if currentForegroundColor != cell.foregroundColor {
                 _write(cell.foregroundColor.foregroundEscapeSequence)
-                self.currentForegroundColor = cell.foregroundColor
+                currentForegroundColor = cell.foregroundColor
             }
             let backgroundColor = cell.backgroundColor ?? .default
-            if self.currentBackgroundColor != backgroundColor {
+            if currentBackgroundColor != backgroundColor {
                 _write(backgroundColor.backgroundEscapeSequence)
-                self.currentBackgroundColor = backgroundColor
+                currentBackgroundColor = backgroundColor
             }
-            self.updateAttributes(cell.attributes)
+            updateAttributes(cell.attributes)
             _write(String(cell.char))
-            self.currentPosition.column += 1
+            currentPosition.column += 1
         }
     }
 
