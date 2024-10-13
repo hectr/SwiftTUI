@@ -49,49 +49,49 @@ private struct FlexibleFrame<Content: View>: View, PrimitiveView, ModifierView {
         node.controls?.add(fixedFrameControl)
         return fixedFrameControl
     }
-    
-    private class FlexibleFrameControl: Control {
-        var minWidth: Extended?
-        var maxWidth: Extended?
-        var minHeight: Extended?
-        var maxHeight: Extended?
-        var alignment: Alignment
-        
-        init(minWidth: Extended?, maxWidth: Extended?, minHeight: Extended?, maxHeight: Extended?, alignment: Alignment) {
-            self.minWidth = minWidth
-            self.maxWidth = maxWidth
-            self.minHeight = minHeight
-            self.maxHeight = maxHeight
-            self.alignment = alignment
+}
+
+public class FlexibleFrameControl: Control {
+    public var minWidth: Extended?
+    public var maxWidth: Extended?
+    public var minHeight: Extended?
+    public var maxHeight: Extended?
+    public var alignment: Alignment
+
+    init(minWidth: Extended?, maxWidth: Extended?, minHeight: Extended?, maxHeight: Extended?, alignment: Alignment) {
+        self.minWidth = minWidth
+        self.maxWidth = maxWidth
+        self.minHeight = minHeight
+        self.maxHeight = maxHeight
+        self.alignment = alignment
+    }
+
+    override func size(proposedSize: Size) -> Size {
+        var proposedSize = proposedSize
+        proposedSize.width = min(maxWidth ?? .infinity, max(minWidth ?? 0, proposedSize.width))
+        proposedSize.height = min(maxHeight ?? .infinity, max(minHeight ?? 0, proposedSize.height))
+        let size = children[0].size(proposedSize: proposedSize)
+        if minHeight == nil, maxHeight == nil {
+            proposedSize.height = size.height
         }
-        
-        override func size(proposedSize: Size) -> Size {
-            var proposedSize = proposedSize
-            proposedSize.width = min(maxWidth ?? .infinity, max(minWidth ?? 0, proposedSize.width))
-            proposedSize.height = min(maxHeight ?? .infinity, max(minHeight ?? 0, proposedSize.height))
-            let size = children[0].size(proposedSize: proposedSize)
-            if minHeight == nil, maxHeight == nil {
-                proposedSize.height = size.height
-            }
-            if minWidth == nil, maxWidth == nil {
-                proposedSize.width = size.width
-            }
-            return proposedSize
+        if minWidth == nil, maxWidth == nil {
+            proposedSize.width = size.width
         }
-        
-        override func layout(size: Size) {
-            super.layout(size: size)
-            children[0].layout(size: children[0].size(proposedSize: size))
-            switch alignment.verticalAlignment {
-            case .top: children[0].layer.frame.position.line = 0
-            case .center: children[0].layer.frame.position.line = (size.height - children[0].layer.frame.size.height) / 2
-            case .bottom: children[0].layer.frame.position.line = size.height - children[0].layer.frame.size.height
-            }
-            switch alignment.horizontalAlignment {
-            case .leading: children[0].layer.frame.position.column = 0
-            case .center: children[0].layer.frame.position.column = (size.width - children[0].layer.frame.size.width) / 2
-            case .trailing: children[0].layer.frame.position.column = size.width - children[0].layer.frame.size.width
-            }
+        return proposedSize
+    }
+
+    public override func layout(size: Size) {
+        super.layout(size: size)
+        children[0].layout(size: children[0].size(proposedSize: size))
+        switch alignment.verticalAlignment {
+        case .top: children[0].layer.frame.position.line = 0
+        case .center: children[0].layer.frame.position.line = (size.height - children[0].layer.frame.size.height) / 2
+        case .bottom: children[0].layer.frame.position.line = size.height - children[0].layer.frame.size.height
+        }
+        switch alignment.horizontalAlignment {
+        case .leading: children[0].layer.frame.position.column = 0
+        case .center: children[0].layer.frame.position.column = (size.width - children[0].layer.frame.size.width) / 2
+        case .trailing: children[0].layer.frame.position.column = size.width - children[0].layer.frame.size.width
         }
     }
 }

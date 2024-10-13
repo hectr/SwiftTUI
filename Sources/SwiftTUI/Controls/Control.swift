@@ -2,14 +2,14 @@ import Foundation
 
 /// The basic layout object that can be created by a node. Not every node will
 /// create a control (e.g. ForEach won't).
-class Control: LayerDrawing {
-    private(set) var children: [Control] = []
-    private(set) var parent: Control?
+public class Control: LayoutObject {
+    public private(set) var children: [Control] = []
+    public private(set) var parent: Control?
 
     private var index: Int = 0
 
-    var window: Window?
-    private(set) lazy var layer: Layer = makeLayer()
+    public var window: Window?
+    public private(set) lazy var layer: Layer = makeLayer()
 
     var root: Control { parent?.root ?? self }
 
@@ -61,7 +61,7 @@ class Control: LayerDrawing {
         proposedSize
     }
 
-    func layout(size: Size) {
+    public func layout(size: Size) {
         layer.frame.size = size
     }
 
@@ -77,25 +77,21 @@ class Control: LayerDrawing {
         return maxSize.height - minSize.height
     }
 
-    // MARK: - Drawing
-
-    func cell(at position: Position) -> Cell? { nil }
-
     // MARK: - Event handling
 
-    func handleEvent(_ char: Character) {
+    public func handleEvent(_ char: Character) {
         for subview in children {
             subview.handleEvent(char)
         }
     }
 
-    func becomeFirstResponder() {
+    public func becomeFirstResponder() {
         scroll(to: .zero)
     }
 
-    func resignFirstResponder() {}
+    public func resignFirstResponder() {}
 
-    var isFirstResponder: Bool { root.window?.firstResponder === self }
+    public var isFirstResponder: Bool { root.window?.firstResponder === self }
 
     // MARK: - Selection
 
@@ -109,10 +105,10 @@ class Control: LayerDrawing {
         return nil
     }
 
-    func selectableElement(below index: Int) -> Control? { parent?.selectableElement(below: self.index) }
-    func selectableElement(above index: Int) -> Control? { parent?.selectableElement(above: self.index) }
-    func selectableElement(rightOf index: Int) -> Control? { parent?.selectableElement(rightOf: self.index) }
-    func selectableElement(leftOf index: Int) -> Control? { parent?.selectableElement(leftOf: self.index) }
+    public func selectableElement(below index: Int) -> Control? { parent?.selectableElement(below: self.index) }
+    public func selectableElement(above index: Int) -> Control? { parent?.selectableElement(above: self.index) }
+    public func selectableElement(rightOf index: Int) -> Control? { parent?.selectableElement(rightOf: self.index) }
+    public func selectableElement(leftOf index: Int) -> Control? { parent?.selectableElement(leftOf: self.index) }
 
     // MARK: - Scrolling
 

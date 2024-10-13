@@ -1,6 +1,6 @@
 import Foundation
 
-enum StackOrientation {
+public enum StackOrientation: Hashable {
     case horizontal
     case vertical
 }

@@ -22,9 +22,9 @@ extension EnvironmentValues {
   }
 }
 
-public struct DividerStyle: Equatable {
-    let horizontal: Character
-    let vertical: Character
+public struct DividerStyle: Hashable {
+    public let horizontal: Character
+    public let vertical: Character
     
     public init(horizontal: Character, vertical: Character) {
         self.horizontal = horizontal
@@ -116,41 +116,25 @@ public struct Divider: View, PrimitiveView {
         control.orientation = stackOrientation
         control.color = foregroundColor
     }
-    
-    private class DividerControl: Control {
-        var orientation: StackOrientation
-        var color: Color
-        var style: DividerStyle
-      
-        init(orientation: StackOrientation, color: Color, style: DividerStyle) {
-            self.orientation = orientation
-            self.color = color
-            self.style = style
-        }
-        
-        override func size(proposedSize: Size) -> Size {
-            switch orientation {
-            case .horizontal:
-                Size(width: 1, height: proposedSize.height)
-            case .vertical:
-                Size(width: proposedSize.width, height: 1)
-            }
-        }
-        
-        override func cell(at position: Position) -> Cell? {
-            switch orientation {
-            case .horizontal:
-                Cell(
-                    char: style.vertical,
-                    foregroundColor: color
-                )
+}
 
-            case .vertical:
-                Cell(
-                    char: style.horizontal,
-                    foregroundColor: color
-                )
-            }
+public class DividerControl: Control {
+    public var orientation: StackOrientation
+    public var color: Color
+    public var style: DividerStyle
+
+    init(orientation: StackOrientation, color: Color, style: DividerStyle) {
+        self.orientation = orientation
+        self.color = color
+        self.style = style
+    }
+
+    public override func size(proposedSize: Size) -> Size {
+        switch orientation {
+        case .horizontal:
+            Size(width: 1, height: proposedSize.height)
+        case .vertical:
+            Size(width: proposedSize.width, height: 1)
         }
     }
 }

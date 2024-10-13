@@ -6,5 +6,10 @@ public struct Size: Equatable, CustomStringConvertible {
 
     public static var zero: Size { Size(width: 0, height: 0) }
 
+    public init(width: Extended, height: Extended) {
+        self.width = width
+        self.height = height
+    }
+
     public var description: String { "\(width)x\(height)" }
 }

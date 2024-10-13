@@ -11,6 +11,9 @@ let package = Package(
         .library(
             name: "SwiftTUI",
             targets: ["SwiftTUI"]),
+        .library(
+            name: "AppKitRenderer",
+            targets: ["AppKitRenderer"]),
     ],
     dependencies: [
          .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0")
@@ -21,6 +24,9 @@ let package = Package(
             dependencies: []),
         .testTarget(
             name: "SwiftTUITests",
+            dependencies: ["SwiftTUI"]),
+        .target(
+            name: "AppKitRenderer",
             dependencies: ["SwiftTUI"]),
     ]
 )

@@ -16,16 +16,12 @@ extension Color: View, PrimitiveView {
             control.layer.invalidate()
         }
     }
-    
-    private class ColorControl: Control {
-        var color: Color
-        
-        init(color: Color) {
-            self.color = color
-        }
-        
-        override func cell(at position: Position) -> Cell? {
-            Cell(char: " ", backgroundColor: color)
-        }
+}
+
+public class  ColorControl: Control {
+    public var color: Color
+
+    init(color: Color) {
+        self.color = color
     }
 }
